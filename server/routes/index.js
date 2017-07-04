@@ -1,82 +1,82 @@
 var express = require('express');
 var router = express.Router();
-var Blob = require('../models/blob');
+var Person = require('../models/person');
 
 router.get('/', function(req, res, next) {
   res.send('Hello, World!');
 });
 
 // *** api routes *** //
-router.get('/blobs', findAllBlobs);
-router.get('/blob/:id', findBlobById);
-router.post('/blobs', addBlob);
-router.put('/blob/:id', updateBlob);
-router.delete('/blob/:id', deleteBlob);
+router.get('/persons', findAllPersons);
+router.get('/persons/:id', findPersonById);
+router.post('/persons', addPerson);
+router.put('/persons/:id', updatePerson);
+router.delete('/persons/:id', deletePerson);
 
 
-// *** get ALL blobs *** //
-function findAllBlobs(req, res) {
-  Blob.find(function(err, blobs) {
+// *** get ALL persons *** //
+function findAllPersons(req, res) {
+  Person.find(function(err, persons) {
     if(err) {
       res.json({'ERROR': err});
     } else {
-      res.json(blobs);
+      res.json(persons);
     }
   });
 }
 
-// *** get SINGLE blobs *** //
-function findBlobById(req, res) {
-  Blob.findById(req.params.id, function(err, blob) {
+// *** get SINGLE person *** //
+function findPersonById(req, res) {
+  Person.findById(req.params.id, function(err, person) {
     if(err) {
       res.json({'ERROR': err});
     } else {
-      res.json(blob);
+      res.json(person);
     }
   });
 }
 
-// *** post ALL blobs *** //
-function addBlob(req, res) {
-  var newBlob = new Blob({
+// *** post ALL persons *** //
+function addPerson(req, res) {
+  var newPerson = new Person({
     name: req.body.name,
     lastName: req.body.lastName
   });
-  newBlob.save(function(err) {
+  newPerson.save(function(err) {
     if(err) {
       res.json({'ERROR': err});
     } else {
-      res.json({'SUCCESS': newBlob});
+      res.json({'SUCCESS': newPerson});
     }
   });
 }
 
-// *** put SINGLE blob *** //
-function updateBlob(req, res) {
-  Blob.findById(req.params.id, function(err, blob) {
-    blob.name = req.body.name;
-    blob.lastName = req.body.lastName;
-    blob.save(function(err) {
+// *** put SINGLE person *** //
+function updatePerson(req, res) {
+  Person.findById(req.params.id, function(err, person) {
+    person.name = req.body.name;
+    person.lastName = req.body.lastName;
+    person.save(function(err) {
       if(err) {
         res.json({'ERROR': err});
       } else {
-        res.json({'UPDATED': blob});
+        res.json({'UPDATED': person});
       }
     });
   });
 }
 
-// *** delete SINGLE blob *** //
-function deleteBlob(req, res) {
-  Blob.findById(req.params.id, function(err, blob) {
+// *** delete SINGLE person *** //
+function deletePerson(req, res) {
+  Person.findById(req.params.id, function(err, person) {
     if(err) {
       res.json({'ERROR': err});
     } else {
-      blob.remove(function(err){
+      person.remove(function(err){
         if(err) {
           res.json({'ERROR': err});
         } else {
-          res.json({'REMOVED': blob});
+          res.json({'REMOVED': person});
         }
       });
     }

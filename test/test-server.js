@@ -5,33 +5,33 @@ var chaiHttp = require('chai-http');
 var mongoose = require("mongoose");
 
 var server = require('../server/app');
-var Blob = require("../server/models/blob");
+var Person = require("../server/models/person");
 
 var should = chai.should();
 chai.use(chaiHttp);
 
 
-describe('Blobs', function() {
+describe('Persons', function() {
 
-  Blob.collection.drop();
+  Person.collection.drop();
 
   beforeEach(function(done){
-    var newBlob = new Blob({
-      name: 'Bat',
-      lastName: 'man'
+    var newPerson = new Person({
+      name: 'John',
+      lastName: 'Doe'
     });
-    newBlob.save(function(err) {
+    newPerson.save(function(err) {
       done();
     });
   });
   afterEach(function(done){
-    Blob.collection.drop();
+    Person.collection.drop();
     done();
   });
 
-  it('should list ALL blobs on /blobs GET', function(done) {
+  it('should list ALL persons on /persons GET', function(done) {
     chai.request(server)
-      .get('/blobs')
+      .get('/persons')
       .end(function(err, res){
         res.should.have.status(200);
         res.should.be.json;
@@ -39,20 +39,23 @@ describe('Blobs', function() {
         res.body[0].should.have.property('_id');
         res.body[0].should.have.property('name');
         res.body[0].should.have.property('lastName');
-        res.body[0].name.should.equal('Bat');
-        res.body[0].lastName.should.equal('man');
+        res.body[0].name.should.equal('John');
+        res.body[0].lastName.should.equal('Doe');
         done();
       });
   });
 
-  it('should list a SINGLE blob on /blob/<id> GET', function(done) {
-      var newBlob = new Blob({
-        name: 'Super',
-        lastName: 'man'
+  it('should list a SINGLE person on /persons/<id> GET', function(done) {
+
+      var newPerson = new Person({
+        name: 'Bob',
+        lastName: 'lee'
       });
-      newBlob.save(function(err, data) {
+
+      newPerson.save(function(err, data) {
         chai.request(server)
-          .get('/blob/'+data.id)
+          .get('/persons/'+data.id)
+
           .end(function(err, res){
             res.should.have.status(200);
             res.should.be.json;
@@ -60,17 +63,17 @@ describe('Blobs', function() {
             res.body.should.have.property('_id');
             res.body.should.have.property('name');
             res.body.should.have.property('lastName');
-            res.body.name.should.equal('Super');
-            res.body.lastName.should.equal('man');
+            res.body.name.should.equal('Bob');
+            res.body.lastName.should.equal('lee');
             res.body._id.should.equal(data.id);
             done();
           });
       });
   });
 
-  it('should add a SINGLE blob on /blobs POST', function(done) {
+  it('should add a SINGLE person on /persons POST', function(done) {
     chai.request(server)
-      .post('/blobs')
+      .post('/persons')
       .send({'name': 'Java', 'lastName': 'Script'})
       .end(function(err, res){
         res.should.have.status(200);
@@ -87,13 +90,13 @@ describe('Blobs', function() {
       });
   });
 
-  it('should update a SINGLE blob on /blob/<id> PUT', function(done) {
+  it('should update a SINGLE person on /persons/<id> PUT', function(done) {
     chai.request(server)
-      .get('/blobs')
+      .get('/persons')
       .end(function(err, res){
         chai.request(server)
-          .put('/blob/'+res.body[0]._id)
-          .send({'name': 'Spider'})
+          .put('/persons/'+res.body[0]._id)
+          .send({'name': 'Bob'})
           .end(function(error, response){
             response.should.have.status(200);
             response.should.be.json;
@@ -102,18 +105,18 @@ describe('Blobs', function() {
             response.body.UPDATED.should.be.a('object');
             response.body.UPDATED.should.have.property('name');
             response.body.UPDATED.should.have.property('_id');
-            response.body.UPDATED.name.should.equal('Spider');
+            response.body.UPDATED.name.should.equal('Bob');
             done();
         });
       });
   });
 
-  it('should delete a SINGLE blob on /blob/<id> DELETE', function(done) {
+  it('should delete a SINGLE person on /persons/<id> DELETE', function(done) {
     chai.request(server)
-      .get('/blobs')
+      .get('/persons')
       .end(function(err, res){
         chai.request(server)
-          .delete('/blob/'+res.body[0]._id)
+          .delete('/persons/'+res.body[0]._id)
           .end(function(error, response){
             response.should.have.status(200);
             response.should.be.json;
@@ -122,7 +125,7 @@ describe('Blobs', function() {
             response.body.REMOVED.should.be.a('object');
             response.body.REMOVED.should.have.property('name');
             response.body.REMOVED.should.have.property('_id');
-            response.body.REMOVED.name.should.equal('Bat');
+            response.body.REMOVED.name.should.equal('John');
             done();
         });
       });
